@@ -1,83 +1,97 @@
-import React, { useState } from 'react'; 
+import React, { useState } from 'react';
+import { Col, Container, Row, Button, Card, ListGroup, Navbar, Nav } from 'react-bootstrap';
 
-import './app.css'; //Import the css we created
 
 function App() {
-    const [usrIn, setUsrIn] = useState(''); //Create state for capturing user input and initialize to empty string
-    const [list, setList] = useState([]); //State to maintain the user's todo list
+    const [usrIn, setUsrIn] = useState('');
+    const [list, setList] = useState([]);
 
-    //in state, the first value is used to access the value, and the second value is used to set the value.
-
-    //function to add todo item
     function addItem() {
-        if (usrIn !== '') { //check if input is empty
+        if (usrIn !== '') {
             const newItem = {
-                id: Math.random(), //generate random id
-                value: usrIn //actual input by user
+                id: Math.random(),
+                value: usrIn
             }
 
-            const newlist = [...list]; //spread operator to get the current list of todos
-            newlist.push(newItem); //add the new added todo to the list
-            setList(newlist); //save the list
-            setUsrIn(''); //empty the input element
+            const newlist = [...list];
+            newlist.push(newItem);
+            setList(newlist);
+            setUsrIn('');
         }
     }
 
-    //when user types into the input, the entered value is captured here and stored to the state variable
     function updateInput(event) {
-        setUsrIn(event.target.value); //set the input value to the state
+        setUsrIn(event.target.value);
     }
 
-    //when user click on the todo item, remove that item
     function removeItem(key) {
-        //get the current list
         const currentList = [...list];
-
-        //from current list, filter and extract all items except the item that was clicked. We can do that by getting the id.
-        
         const updatedList = currentList.filter(item => item.id !== key);
-        //if the key that was passed is not same as the item's id, then store it in the updatedList. If key===item.id, then it will omit.
 
-        setList(updatedList); //update the list
+        setList(updatedList);
     }
 
     return (
-        <div className="container">
-            <div className="title-container">
-                <h3>To Do List</h3>
-            </div>
-            <div className="comp1-container">
-                <p>What do you want to do?</p>
-                <input type="text" id="inputTODO" name="inputTODO" placeholder="Enter To Do......" onChange={updateInput} value={usrIn} />
-                <button type="buttton" name="sub" onClick={addItem}>ADD</button>
-            </div>
-            {
-                list.length > 0 ?
-                    (
-                        <div className="comp2-container">
-                            <ul>
-                            {
-                                list.map(items => {
-                                    return (
-                                        <li key={items.id} onClick={() => removeItem(items.id)}>{items.value}<hr/></li>
-                                    )
-                                })
-                            }
-                            </ul>
-                        </div>
-                    )
-                    :
-                    (
-                        <div className="comp2-container">
-                            <p className="text-center">You have nothing to do? Such a lazy person!</p>
-                        </div>
-                    )
-            }
+        <>
+            <Navbar bg="dark" expand="lg" className="navbar-dark">
+                <Container>
+                    <Navbar.Brand href="" className="text-light">To Do List</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav" className="ml-auto">
+                        <Nav className="ml-auto">
+                            <Nav.Link href="#home" className="text-light">Visit The GitHub Repo</Nav.Link>
+                            <Nav.Link href="" className="text-secondary">Demo By React JS R&amp;D Team</Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+            <Container>
+                <Row className="mt-4 text-center">
+                    <Col className="text-center" sm={9}>
+                        <input
+                            type="text"
+                            id="inputTODO"
+                            name="inputTODO"
+                            placeholder="What do you like to do?"
+                            onChange={updateInput}
+                            value={usrIn}
+                            style={{ width: "100%", padding: '5px' }} />
+                    </Col>
+                    <Col sm={3}>
+                        <Button className="btn btn-info d-none d-sm-block form-control" onClick={addItem}>Add Item</Button>
+                        <Button className="btn btn-info d-block d-sm-none mt-4 form-control" onClick={addItem}>Add Item</Button>
+                    </Col>
+                </Row>
 
-        </div >
+                <Row className="mt-4">
+                    <Col sm>
+                        <Card>
+                            <Card.Header className="bg-secondary text-white">Your To Do List</Card.Header>
+                            <ListGroup variant="flush">
+                                {
+                                    list.length > 0 ? (
+                                        list.map(item => {
+                                            return (
+                                                <ListGroup.Item key={item.id} className="d-flex flex-row justify-content-between">
+                                                    {item.value}
+                                                    <Button className="btn btn-danger" onClick={() => removeItem(item.id)}>
+                                                        Delete
+                                                    </Button>
+                                                </ListGroup.Item>
+                                            )
+                                        })
+                                    ) :
+                                        <ListGroup.Item>Your To Do List is Empty!</ListGroup.Item>
+                                }
+                            </ListGroup>
+                        </Card>
+                    </Col>
+                </Row>
+
+
+            </Container>
+        </>
     );
 };
-
-
 
 export default App;
