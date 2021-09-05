@@ -19,9 +19,12 @@ In your index.js file import the bootstrap css file.
 For example:
 
 > `import  React  from  'react';`
+> 
 > `import  ReactDOM  from  'react-dom';
+> 
 > `import  App  from  './app';`
-> **`import  'bootstrap/dist/css/bootstrap.min.css';`**
+> `**import  'bootstrap/dist/css/bootstrap.min.css';**`
+> 
 > `ReactDOM.render(<App  />, document.getElementById('root'));`
 
 ## That's it?
