@@ -39,7 +39,7 @@ function App() {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className="ml-auto">
                         <Nav className="ml-auto">
-                            <Nav.Link href="#home" className="text-light">Visit The GitHub Repo</Nav.Link>
+                            <Nav.Link target="_blank" href="https://github.com/JoeSwanTonsing/todolist-react-js/tree/Lesson3-WithBootstrap4" className="text-light">Visit The GitHub Repo</Nav.Link>
                             <Nav.Link href="" className="text-secondary">Demo By React JS R&amp;D Team</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
