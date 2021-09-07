@@ -3,136 +3,69 @@
 React JS research & development team's demo and tutorial files.
 
 
-# Lesson 3
+## Lesson 4 - Passing Props to Components
 
-In this lesson, we  will learn how to integrate **Bootstrap 4** to our already created **To Do List App** back in lessons 1 & 2.
+### Overview
+In this lesson we will continue with our **To Do List** app. We will now learn about ***components*** and passing props to our components.
 
-### Required Dependencies, Libraries, etc
-- React-Bootstrap (Bootstrap 4):
-> `npm install react-bootstrap bootstrap@4.6.0`
+## Let's Begin
 
-
-
-## Import BS4:
-
-In your index.js file import the bootstrap css file.
-For example:
-
-> import  React  from  'react';
-> import  ReactDOM  from  'react-dom';
-> import  App  from  './app';
-> **`import  'bootstrap/dist/css/bootstrap.min.css';`**
-> ReactDOM.render(<App  />, document.getElementById('root'));
-
-## That's it?
-
-Well, almost, but not quite. Now you can start using bootstrap 4 classes and elements into your application. Read on for how to convert your elements to bootstrap classes.
-
-## Out With the Old
-
-In your app.js file, you can remove everything within the `<div className='container'>`. Basically what I'm saying to remove is the html part, as we are going to replace them all with bootstrap.
-
-> **Note:** Although it is not important, it will be advantageous to know and be already familiar with bootstrap classes and class naming conventions.
-
-## In with the New
 ### Step 1:
-
-In your app.js return parameter, (which if you followed the above steps should now be empty), declare a new component. A bootstrap component. We'll use the 'container' class of bootstrap:
-
-`<Container></Container>`
-
-If you have installed code hinters and linters, you will already see warning/error lines on the component. That is because we have not yet imported the components from the bootstrap library.
-
-You can do that by importing the required components from the bootstrap library:
-
-- `import Container from 'react-bootstrap/Container';`
-
-If you have to import more than one, then you can group and import all components like:
-
-- `import {Container, Row, Col, Button, Card, ListGroup, Navbar, Nav} from 'react-bootstrap';`
-
-Now that we have imported all the components we will require, lets go back to the code.
-
-> **Note:** As you may have already recognised, you can see the similarities between the normal bootstrap class and the react-boostrap classes, in that, they have the same class names, it only defers in how you use them. For example, in html you couold use a container, a row or a col class within a div tag:
-> `<div class="container">`
-> In React however, each class name becomes a component on its own. So a container becomes a separate component, similarly a row and a col:
-> `<Container>`
-> `<Row>`
-> `<Col>`
+In your **`src`** directory, create a new directory and we will call it ***components***.
+Within the components directory, create a new file and name it `List.js`.
 
 ### Step 2:
 
-Let's re-create the title bar of out app.
-Previously we had an `<h3></h3>` tag with the text 'To Do List'. Let us now replace it with a navbar. Below is the code:
-
-    <Navbar bg="dark" expand="lg" className="navbar-dark">
-    <Container>
-    <Navbar.Brand  href=""  className="text-light">To Do List</Navbar.Brand>
-    <Navbar.Toggle  aria-controls="basic-navbar-nav"  />
-    <Navbar.Collapse  id="basic-navbar-nav"  className="ml-auto">
-    <Nav  className="ml-auto">
-    <Nav.Link  target="_blank"  href="https://github.com/JoeSwanTonsing/todolist-react-js/tree/Lesson3-WithBootstrap4"  className="text-light">Visit The GitHub Repo</Nav.Link>
-    <Nav.Link  href=""  className="text-secondary">Demo By React JS R&amp;D Team</Nav.Link>
-    </Nav>
-    </Navbar.Collapse>
-    </Container>
-    </Navbar>
-
-Here we are using a dark theme navbar. The nav bar is collapsible, that means that on bigger screens the menu items will be expanded and shown, and on smaller screens, the menu items will be shown only on the press of the toggle button.
+Come back to your ***App.js*** and remove the `<Row>` block where we displayed the user's To Do List. We won't need that anymore as we are going to make a component that will display the list of user's To Do List.
 
 ### Step 3:
-As in the last lesson, we will wrap all of our contents in a container. This time we will use bootstrap's container component.
+Now, in your ***List.js***, import React, like how we did previously in our App.js.
+Then create a function. Let's call it `List`. So your function definition will look as below:
 
-`<Container></Container>`
+`function List(){}`
 
-Within the container, we will separate each element by the row and col components.
-In the first row, we will have:
-- A text input field where the user will be able to input a todo item,
-- Button that will add the todo item to the list.
+Now, before we forget, let's export it so that we can actually use it. So, after the declaration, export it as default:
 
-Code is as follows:
+`export default List;`
 
-    <Row  className="mt-4 text-center">
-    
-    <Col  className="text-center"  sm={9}>
-    <input
-    type="text"
-    id="inputTODO"
-    name="inputTODO"
-    placeholder="What do you like to do?"
-    onChange={updateInput}
-    value={usrIn}
-    style={{ width:  "100%", padding:  '5px' }}  />
-    </Col>
-    
-    <Col  sm={3}>
-    <Button  className="btn btn-info d-none d-sm-block form-control"  onClick={addItem}>Add Item</Button>
-    <Button  className="btn btn-info d-block d-sm-none mt-4 form-control"  onClick={addItem}>Add Item</Button>
-    </Col>
-    
-    </Row>
+**OR**
 
+You can combine the two steps into one and declare the function as:
 
-As you can see from code above, we declared a row, and within that row we have 2 cols declared. One for text input and the other for the button. Looking closer at the `<Col>` component you will see that we have passed a `sm={9}` and `sm={3}` props to it. This basically translates to `<div class="col-sm-9">` and `<div class="col-sm-3">` respectively.
-
+`export default function List(){}`
 
 ### Step 4:
+Import the bootstrap components you will require. As you can see, in the previous tutorial, we used a *Card* component to list out the to do items, and a *ListGroup* component that actually holds each list item. So import those from react-bootstrap.
 
-Now it is time to display the To Do list. For this, we will declare the list in a new row component.
-Code:
+`import {Row, Col, ListGroup, Card} from 'react-bootstrap';`
 
-    <Row className="mt-4">
-    <Col sm>
+Now, in the **return** of the function, define a row,  and a card.
+Give the card header a title by:
+
     <Card>
-    <Card.Header  className="bg-secondary text-white">Your To Do List</Card.Header>
-    <ListGroup  variant="flush">
+    <Card.Header>Title of The Card Goes Here</Card.Header>
+    </Card>
+
+> As you can see, this is kind of similar to:
+> `<div class="card">`
+> `<div class="card-header">Card Title Here</div>`
+> `</div>`
+
+ Now, within the List Group, we will display the list of user's to do items.
+ You can use the same code as in last tutorial:
+
+    <Row className="mt-4 mb-auto">
+    <Col sm={12}>
+    <Card>
+    <Card.Header className="bg-secondary text-white">Your To Do List</Card.Header>
+    <ListGroup variant="flush">
     {
     list.length > 0 ? (
-    list.map(item  => {
+    list.map(item => {
     return (
-    <ListGroup.Item  key={item.id}  className="d-flex flex-row justify-content-between">
+    <ListGroup.Item key={item.id} className="d-flex flex-row justify-content-between">
     {item.value}
-    <Button  className="btn btn-danger"  onClick={() =>  removeItem(item.id)}>
+    <Button className="btn btn-danger" onClick={() => removeItem(item.id)}>
     Delete
     </Button>
     </ListGroup.Item>
@@ -146,24 +79,65 @@ Code:
     </Col>
     </Row>
 
-Here first thing you will notice is that in the `<Col>` we have a sm, but without the size. This means that the col will occupy the whole width of the view port. We use a card to contain all of our **To Do List** items and present the list items using the **ListGroup** component.
+Since we are using components and passing props to our `List` component, we have not defined `list`.
 
-Rest of the coding and the functionality remains the same as that from lessons 1 & 2.
+So let us receive the props that are actually passed from the parent component. In our case, the parent component will be App.js.
 
-## Almost Done
+So in App.js, we will first import the newly created component - List.js:
 
-Our React app is almost ready to run. If you have the server already running you should see some errors. This is because in reactjs, your component should return a single wrapper/element. For example a div tag.
+`import List from './components/List';`
 
-Go ahead and wrap the whole contents of your `return()` function with an empty tag:
-`<> </>`.
+Then in the block where we previously listed the user's To Do items, we will now user the `List` component instead.
 
+`<List />`
 
-# Final
+As soon as you hit the save button, you will get an error message saying that 'list' is not defined. 'Button' is not defined. 'removeItem' is not defined.
 
-Your `app.js` file should now look like this:
+We will take care of the errors in the next steps.
+
+### Step 5:
+We have used the state to store the user's to do list in our app. And since we want to display the list in another component, we will have to pass the state variable as prop to the component.
+So in the `List` component, pass a parameter like so:
+
+`<List items={list} />`
+
+What this means is:
+`List` is the component that we created (*List.js*), and we are passing a property `items` and the value/content of the property is the state variable `list`.
+
+You can think of *props* / *property* in React as *parameters/arguments* in other programming languages.
+
+### Step 6:
+Now come back to the *List.js*
+
+Here we will have to remove some functionality for this tutorial, but we will add it back again in the next one as it is not within the span of this lesson.
+
+So remove the:
+
+    <Button className="btn btn-danger" onClick={() => removeItem(item.id)}>
+    Delete
+    </Button>
+
+Within the ListGroup.Item block.
+
+You should still see ***'Failed to compile'*** error. That is because we do not have `list` in our component.
+
+If you remember in our App.js we passed the prop `items` to the List component. So now we will have to receive it.
+
+Replace the function declaration:
+
+`export  default  function  List({ items }) {`
+
+Now, in the code within <ListGroup> block, replace all 'list' with 'items'
+
+There you have it. Our List is now a component on its own, and you have successfully passed the list prop to the List component and displayed the list items.
+
+***As  you may have noticed, the functionality for the 'Remove Item' has been removed. This is because in React, it is very easy to pass props from the parent to the child, however the child cannot  pass props back to the parent just as easily. There are various ways to overcome this using contexts or redux, etc and we will discuss this in the next Lesson.***
+
+## After completion, your App.js should look like this
 
     import  React, { useState } from  'react';
-    import { Col, Container, Row, Button, Card, ListGroup, Navbar, Nav } from  'react-bootstrap';
+    import { Col, Container, Row, Button, Navbar, Nav } from  'react-bootstrap';
+    import  List  from  './components/List';
     
     function  App() {
     const [usrIn, setUsrIn] = useState('');
@@ -175,7 +149,6 @@ Your `app.js` file should now look like this:
     id:  Math.random(),
     value:  usrIn
     }
-      
     const  newlist = [...list];
     newlist.push(newItem);
     setList(newlist);
@@ -193,14 +166,9 @@ Your `app.js` file should now look like this:
     setList(updatedList);
     }
     
-      
-    
     return (
-    
-    <>
-    
-    <Navbar  bg="dark"  expand="lg"  className="navbar-dark">
-    
+    <div  style={{height:"100vh", overflow:  'hidden'}}>
+    <Navbar  bg="dark"  expand="lg"  className="navbar-dark fixed-top">
     <Container>
     <Navbar.Brand  href=""  className="text-light">To Do List</Navbar.Brand>
     <Navbar.Toggle  aria-controls="basic-navbar-nav"  />
@@ -212,11 +180,9 @@ Your `app.js` file should now look like this:
     </Navbar.Collapse>
     </Container>
     </Navbar>
-    
-    <Container>
-    
+    <Container  style={{paddingTop:  50}}>
     <Row  className="mt-4 text-center">
-    <Col className="text-center" sm={9}>
+    <Col  className="text-center"  sm={9}>
     <input
     type="text"
     id="inputTODO"
@@ -224,28 +190,40 @@ Your `app.js` file should now look like this:
     placeholder="What do you like to do?"
     onChange={updateInput}
     value={usrIn}
-    style={{ width:  "100%", padding:  '5px' }}  />
+    className="form-control"
+    style={{ padding:  '5px' }}  />
     </Col>
-    <Col sm={3}>
+    <Col  sm={3}>
     <Button  className="btn btn-info d-none d-sm-block form-control"  onClick={addItem}>Add Item</Button>
     <Button  className="btn btn-info d-block d-sm-none mt-4 form-control"  onClick={addItem}>Add Item</Button>
     </Col>
     </Row>
-    
-    <Row className="mt-4">
-    <Col sm>
+    <List  items={list}  />
+    </Container>
+    </div>
+    );
+    };
+    export  default  App;
+
+## Your List.js should look like this:
+
+    import  React  from  'react';
+    import { Row, Col, ListGroup, Card } from  'react-bootstrap';
+    export  default  function  List({ items }) {
+    return (
+    <Row  className="mt-4 mb-auto">
+    <Col  sm={12}>
     <Card>
-    <Card.Header  className="bg-secondary text-white">Your To Do List</Card.Header>
+    <Card.Header  className="bg-secondary text-white">Your To Do List {items.length > 0 ? (
+    '- ' + items.length + ' Items'
+    ): null}</Card.Header>
     <ListGroup  variant="flush">
     {
-    list.length > 0 ? (
-    list.map(item  => {
+    items.length > 0 ? (
+    items.map(item  => {
     return (
     <ListGroup.Item  key={item.id}  className="d-flex flex-row justify-content-between">
     {item.value}
-    <Button  className="btn btn-danger"  onClick={() =>  removeItem(item.id)}>
-    Delete
-    </Button>
     </ListGroup.Item>
     )
     })
@@ -256,18 +234,8 @@ Your `app.js` file should now look like this:
     </Card>
     </Col>
     </Row>
-    
-    </Container>
-    </>
     );
-    };
-    
-    export  default  App;
-
-### That's it. You can now refresh you browser and see the changes and differences. 
-
-You will also notice that our app is now responsive to screen sizes.
+    }
 
 
-
-## That is it for Lesson 3. See you in the next Lesson. 🙂
+### That is it for Lesson 4. See you in the next Lesson. 🙂
