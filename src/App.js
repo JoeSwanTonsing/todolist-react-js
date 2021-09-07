@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Col, Container, Row, Button, Card, ListGroup, Navbar, Nav } from 'react-bootstrap';
+import { Col, Container, Row, Button, Navbar, Nav } from 'react-bootstrap';
+
+import List from './components/List';
 
 
 function App() {
@@ -12,7 +14,6 @@ function App() {
                 id: Math.random(),
                 value: usrIn
             }
-
             const newlist = [...list];
             newlist.push(newItem);
             setList(newlist);
@@ -32,8 +33,8 @@ function App() {
     }
 
     return (
-        <>
-            <Navbar bg="dark" expand="lg" className="navbar-dark">
+        <div style={{height:"100vh", overflow: 'hidden'}}>
+            <Navbar bg="dark" expand="lg" className="navbar-dark fixed-top">
                 <Container>
                     <Navbar.Brand href="" className="text-light">To Do List</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -45,7 +46,7 @@ function App() {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            <Container>
+            <Container style={{paddingTop: 50}}>
                 <Row className="mt-4 text-center">
                     <Col className="text-center" sm={9}>
                         <input
@@ -55,7 +56,8 @@ function App() {
                             placeholder="What do you like to do?"
                             onChange={updateInput}
                             value={usrIn}
-                            style={{ width: "100%", padding: '5px' }} />
+                            className="form-control"
+                            style={{ padding: '5px' }} />
                     </Col>
                     <Col sm={3}>
                         <Button className="btn btn-info d-none d-sm-block form-control" onClick={addItem}>Add Item</Button>
@@ -63,33 +65,10 @@ function App() {
                     </Col>
                 </Row>
 
-                <Row className="mt-4">
-                    <Col sm>
-                        <Card>
-                            <Card.Header className="bg-secondary text-white">Your To Do List</Card.Header>
-                            <ListGroup variant="flush">
-                                {
-                                    list.length > 0 ? (
-                                        list.map(item => {
-                                            return (
-                                                <ListGroup.Item key={item.id} className="d-flex flex-row justify-content-between">
-                                                    {item.value}
-                                                    <Button className="btn btn-danger" onClick={() => removeItem(item.id)}>
-                                                        Delete
-                                                    </Button>
-                                                </ListGroup.Item>
-                                            )
-                                        })
-                                    ) :
-                                        <ListGroup.Item>Your To Do List is Empty!</ListGroup.Item>
-                                }
-                            </ListGroup>
-                        </Card>
-                    </Col>
-                </Row>
+                <List items={list} />
 
             </Container>
-        </>
+        </div>
     );
 };
 
