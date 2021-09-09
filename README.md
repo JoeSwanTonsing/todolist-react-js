@@ -6,7 +6,7 @@ React JS research & development team's demo and tutorial files.
 
 ### Overview
 
-In this lesson we will continue with our **To Do List** app. We will now learn about **_context_** and for state easier state management.
+In this lesson we will continue with our **To Do List** app. We will now learn about **_context_** and use it in our app for easier state management.
 
 ## Let's Begin
 
@@ -292,6 +292,7 @@ const updatedList = currentList.filter((item) => item.id !== key);
 
 return (
 <Row className="mt-4 mb-auto">
+
 <Col sm={12}>
 <Card>
 <Card.Header className="bg-secondary text-white">
