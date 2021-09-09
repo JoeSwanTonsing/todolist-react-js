@@ -2,240 +2,326 @@
 
 React JS research & development team's demo and tutorial files.
 
-
-## Lesson 4 - Passing Props to Components
+## Lesson 5 - Managing State Using Context
 
 ### Overview
-In this lesson we will continue with our **To Do List** app. We will now learn about ***components*** and passing props to our components.
+
+In this lesson we will continue with our **To Do List** app. We will now learn about **_context_** and for state easier state management.
 
 ## Let's Begin
 
 ### Step 1:
-In your **`src`** directory, create a new directory and we will call it ***components***.
-Within the components directory, create a new file and name it `List.js`.
+
+In your **`components`** directory, create a new javascript file and we will call it `Context.js`.
 
 ### Step 2:
 
-Come back to your ***App.js*** and remove the `<Row>` block where we displayed the user's To Do List. We won't need that anymore as we are going to make a component that will display the list of user's To Do List.
+Inside the `Context.js` file,we are going to import React, like how we did in all react components.
+We are also going to import `createContext` and `useState` which are the main hooks for building our context(which is similar to a store in Redux).
+
+Below is the corresponding code :-
+
+`import React, { createContext, useState } from "react";`
 
 ### Step 3:
-Now, in your ***List.js***, import React, like how we did previously in our App.js.
-Then create a function. Let's call it `List`. So your function definition will look as below:
 
-`function List(){}`
+Our next step is to make use of our `createContext`. To do so, we will create a context which will be exported and used throughout our Todo application. Let's call this context by the name **TodoListContext**
 
-Now, before we forget, let's export it so that we can actually use it. So, after the declaration, export it as default:
+`export const TodoListContext = createContext();`
 
-`export default List;`
-
-**OR**
-
-You can combine the two steps into one and declare the function as:
-
-`export default function List(){}`
+Brace yourselves! The code is about to be interesting from the next step onwards. :D
 
 ### Step 4:
-Import the bootstrap components you will require. As you can see, in the previous tutorial, we used a *Card* component to list out the to do items, and a *ListGroup* component that actually holds each list item. So import those from react-bootstrap.
 
-`import {Row, Col, ListGroup, Card} from 'react-bootstrap';`
+Inside our `Context.js` file, we are now going to create a functional component by the name **Context** and export it as default as follows:-
 
-Now, in the **return** of the function, define a row,  and a card.
-Give the card header a title by:
+    const Context = () => {
+        return ();
+    };
 
-    <Card>
-    <Card.Header>Title of The Card Goes Here</Card.Header>
-    </Card>
-
-> As you can see, this is kind of similar to:
-> `<div class="card">`
-> `<div class="card-header">Card Title Here</div>`
-> `</div>`
-
- Now, within the List Group, we will display the list of user's to do items.
- You can use the same code as in last tutorial:
-
-    <Row className="mt-4 mb-auto">
-    <Col sm={12}>
-    <Card>
-    <Card.Header className="bg-secondary text-white">Your To Do List</Card.Header>
-    <ListGroup variant="flush">
-    {
-    list.length > 0 ? (
-    list.map(item => {
-    return (
-    <ListGroup.Item key={item.id} className="d-flex flex-row justify-content-between">
-    {item.value}
-    <Button className="btn btn-danger" onClick={() => removeItem(item.id)}>
-    Delete
-    </Button>
-    </ListGroup.Item>
-    )
-    })
-    ) :
-    <ListGroup.Item>Your To Do List is Empty!</ListGroup.Item>
-    }
-    </ListGroup>
-    </Card>
-    </Col>
-    </Row>
-
-Since we are using components and passing props to our `List` component, we have not defined `list`.
-
-So let us receive the props that are actually passed from the parent component. In our case, the parent component will be App.js.
-
-So in App.js, we will first import the newly created component - List.js:
-
-`import List from './components/List';`
-
-Then in the block where we previously listed the user's To Do items, we will now user the `List` component instead.
-
-`<List />`
-
-As soon as you hit the save button, you will get an error message saying that 'list' is not defined. 'Button' is not defined. 'removeItem' is not defined.
-
-We will take care of the errors in the next steps.
+    export default Context;
 
 ### Step 5:
-We have used the state to store the user's to do list in our app. And since we want to display the list in another component, we will have to pass the state variable as prop to the component.
-So in the `List` component, pass a parameter like so:
 
-`<List items={list} />`
+Now, inside our **Context** functional component, we are going to declare a useState array-state variable called `list` as follows :-
 
-What this means is:
-`List` is the component that we created (*List.js*), and we are passing a property `items` and the value/content of the property is the state variable `list`.
+`const [list,setList] = useState([]);`
 
-You can think of *props* / *property* in React as *parameters/arguments* in other programming languages.
+And inside our **return** function, we are going to mount a provider component.
+_Note: A provider component is a component which is part of a context. We need to use this component in order to pass data down into our children (which we will see in a bit)_
+
+Let us mount a provider which belongs to the **TodoListContext** created in _step 3_ as follows :-
+
+    return(
+        <TodoListContext.Provider value={{list,setList}}>
+        </TodoListContext.Provider>
+    )
+
+_Note: What we are doing here is we are passing **list** and **setList** as props to our children(But who are the children,right??? We'll see that in the next step)_
 
 ### Step 6:
-Now come back to the *List.js*
 
-Here we will have to remove some functionality for this tutorial, but we will add it back again in the next one as it is not within the span of this lesson.
+Let us leave the `Context.js` file for now, and enter our `index.js` file.
+What we are going to do here is, we are going to wrap our `<App/>` component in side our `<Context/>` component which we have just created. To do that we have to import our `Context` component.
 
-So remove the:
+`import Context from "./components/Context";`
 
-    <Button className="btn btn-danger" onClick={() => removeItem(item.id)}>
-    Delete
-    </Button>
+Now, let use go ahead and wrap it:-
 
-Within the ListGroup.Item block.
+ReactDOM.render(
+<Context>
+<App />
+</Context>,document.getElementById("root")
+);
 
-You should still see ***'Failed to compile'*** error. That is because we do not have `list` in our component.
+_Quick-Qtn:Con you guess who the **children** are???_
 
-If you remember in our App.js we passed the prop `items` to the List component. So now we will have to receive it.
+### Step 7:
 
-Replace the function declaration:
+Let us go back to our `Context.js` file.
+Our goal now is provide the children component to the context's provider. We will do that in two steps. Firstly, we will receive the children as parameter of the `Context` functional component and then we will provide it to the <TodoListContext.Provider> component as children with the keyword **children**. The following is our code :-
 
-`export  default  function  List({ items }) {`
-
-Now, in the code within <ListGroup> block, replace all 'list' with 'items'
-
-There you have it. Our List is now a component on its own, and you have successfully passed the list prop to the List component and displayed the list items.
-
-***As  you may have noticed, the functionality for the 'Remove Item' has been removed. This is because in React, it is very easy to pass props from the parent to the child, however the child cannot  pass props back to the parent just as easily. There are various ways to overcome this using contexts or redux, etc and we will discuss this in the next Lesson.***
-
-## After completion, your App.js should look like this
-
-    import  React, { useState } from  'react';
-    import { Col, Container, Row, Button, Navbar, Nav } from  'react-bootstrap';
-    import  List  from  './components/List';
-    
-    function  App() {
-    const [usrIn, setUsrIn] = useState('');
-    const [list, setList] = useState([]);
-    
-    function  addItem() {
-    if (usrIn !== '') {
-    const  newItem = {
-    id:  Math.random(),
-    value:  usrIn
-    }
-    const  newlist = [...list];
-    newlist.push(newItem);
-    setList(newlist);
-    setUsrIn('');
-    }
-    }
-    
-    function  updateInput(event) {
-    setUsrIn(event.target.value);
-    }
-    
-    function  removeItem(key) {
-    const  currentList = [...list];
-    const  updatedList = currentList.filter(item  =>  item.id !== key);
-    setList(updatedList);
-    }
-    
-    return (
-    <div  style={{height:"100vh", overflow:  'hidden'}}>
-    <Navbar  bg="dark"  expand="lg"  className="navbar-dark fixed-top">
-    <Container>
-    <Navbar.Brand  href=""  className="text-light">To Do List</Navbar.Brand>
-    <Navbar.Toggle  aria-controls="basic-navbar-nav"  />
-    <Navbar.Collapse  id="basic-navbar-nav"  className="ml-auto">
-    <Nav  className="ml-auto">
-    <Nav.Link  target="_blank"  href="https://github.com/JoeSwanTonsing/todolist-react-js/tree/Lesson3-WithBootstrap4"  className="text-light">Visit The GitHub Repo</Nav.Link>
-    <Nav.Link  href=""  className="text-secondary">Demo By React JS R&amp;D Team</Nav.Link>
-    </Nav>
-    </Navbar.Collapse>
-    </Container>
-    </Navbar>
-    <Container  style={{paddingTop:  50}}>
-    <Row  className="mt-4 text-center">
-    <Col  className="text-center"  sm={9}>
-    <input
-    type="text"
-    id="inputTODO"
-    name="inputTODO"
-    placeholder="What do you like to do?"
-    onChange={updateInput}
-    value={usrIn}
-    className="form-control"
-    style={{ padding:  '5px' }}  />
-    </Col>
-    <Col  sm={3}>
-    <Button  className="btn btn-info d-none d-sm-block form-control"  onClick={addItem}>Add Item</Button>
-    <Button  className="btn btn-info d-block d-sm-none mt-4 form-control"  onClick={addItem}>Add Item</Button>
-    </Col>
-    </Row>
-    <List  items={list}  />
-    </Container>
-    </div>
-    );
+    const Context = ({ children }) => {
+        const [list, setList] = useState([]);
+        return (
+            <TodoListContext.Provider value={{ list, setList }}>
+                 {children}
+            </TodoListContext.Provider>
+        );
     };
-    export  default  App;
 
-## Your List.js should look like this:
+_Note: The children here is the `<App/>` component and all its children. This basically means that all the components in our application can access our sweet `TodoListContext`. Let us see how we do that in the next step._
 
-    import  React  from  'react';
-    import { Row, Col, ListGroup, Card } from  'react-bootstrap';
-    export  default  function  List({ items }) {
+### Step 8:
+
+Let us go to our `App.js` file. Here, we can see that we are still using a local **list** state which is declared using the useState hook as follows :-
+
+`const [list, setList] = useState([])`
+
+We are now going to replace the above line by using context state as follows :-
+
+`const { list, setList } = useContext(TodoListContext);`
+
+But hold on!!! We haven't imported the **useContext** hook and **TodoListContext** just yet. Let us do that right away :-
+
+`import React,{useState,useContext} from "react";`
+`import {TodoListContext} from "./components/Context";`
+
+*We have just successfully created our context and everytime we add a new to-do, we are storing it in the context. Go ahead and give it a try*🙂
+
+### Step 9:
+
+We are now going to work on the deletion of todos.
+
+Let us navigate to `List.js` file. Import a button from `react-bootstrap` into this file.
+
+`import { Row, Col, ListGroup, Card, Button } from "react-bootstrap";`
+
+Now, inside the `<ListGroup.Item>` component, next to _{item.value}_ , we are going to put the delete button. Following is the code :-
+
+<ListGroup.Item
+key={item.id}
+className="d-flex flex-row justify-content-between" >
+{item.value}
+<Button
+className="btn btn-danger"
+onClick={() => removeItem(item.id)} >
+Delete
+</Button>
+</ListGroup.Item>
+
+Now, let us cut the `removeItem()` function that we have inside the `App.js` file and paste it inside the `List` functional component as follows:-
+
+export default function List({ items }) {
+const { list, setList } = useContext(TodoListContext);
+
+    function removeItem(key) {
+        const currentList = [...list];
+        const updatedList = currentList.filter((item) => item.id !== key);
+
+        setList(updatedList);
+    }
+
     return (
-    <Row  className="mt-4 mb-auto">
-    <Col  sm={12}>
-    <Card>
-    <Card.Header  className="bg-secondary text-white">Your To Do List {items.length > 0 ? (
-    '- ' + items.length + ' Items'
-    ): null}</Card.Header>
-    <ListGroup  variant="flush">
-    {
-    items.length > 0 ? (
-    items.map(item  => {
-    return (
-    <ListGroup.Item  key={item.id}  className="d-flex flex-row justify-content-between">
-    {item.value}
-    </ListGroup.Item>
+        .
+        .
+        .
     )
-    })
-    ) :
-    <ListGroup.Item>Your To Do List is Empty!</ListGroup.Item>
-    }
-    </ListGroup>
-    </Card>
-    </Col>
-    </Row>
-    );
-    }
 
+}
 
-### That is it for Lesson 4. See you in the next Lesson. 🙂
+## After completion, your index.js should look like this
+
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Context from "./components/Context";
+
+ReactDOM.render(
+<Context>
+<App />
+</Context>,
+document.getElementById("root")
+);
+
+## Your Context.js file should look like this
+
+import React, { createContext, useState } from "react";
+
+export const TodoListContext = createContext();
+
+const Context = ({ children }) => {
+const [list, setList] = useState([]);
+return (
+<TodoListContext.Provider value={{ list, setList }}>
+{children}
+</TodoListContext.Provider>
+);
+};
+
+export default Context;
+
+## Your App.js file should look like this
+
+import React, { useState, useContext } from "react";
+import { Col, Container, Row, Button, Navbar, Nav } from "react-bootstrap";
+import { TodoListContext } from "./components/Context";
+import List from "./components/List";
+
+function App() {
+const [usrIn, setUsrIn] = useState("");
+const { list, setList } = useContext(TodoListContext);
+
+function addItem() {
+if (usrIn !== "") {
+const newItem = {
+id: Math.random(),
+value: usrIn,
+};
+const newlist = [...list];
+newlist.push(newItem);
+setList(newlist);
+setUsrIn("");
+}
+}
+
+function updateInput(event) {
+setUsrIn(event.target.value);
+}
+
+return (
+
+<div style={{ height: "100vh", overflow: "hidden" }}>
+<Navbar bg="dark" expand="lg" className="navbar-dark fixed-top">
+<Container>
+<Navbar.Brand href="" className="text-light">
+To Do List
+</Navbar.Brand>
+<Navbar.Toggle aria-controls="basic-navbar-nav" />
+<Navbar.Collapse id="basic-navbar-nav" className="ml-auto">
+<Nav className="ml-auto">
+<Nav.Link
+target="\_blank"
+href="https://github.com/JoeSwanTonsing/todolist-react-js/tree/Lesson3-WithBootstrap4"
+className="text-light" >
+Visit The GitHub Repo
+</Nav.Link>
+<Nav.Link href="" className="text-secondary">
+Demo By React JS R&amp;D Team
+</Nav.Link>
+</Nav>
+</Navbar.Collapse>
+</Container>
+</Navbar>
+<Container style={{ paddingTop: 50 }}>
+<Row className="mt-4 text-center">
+<Col className="text-center" sm={9}>
+<input
+type="text"
+id="inputTODO"
+name="inputTODO"
+placeholder="What do you like to do?"
+onChange={updateInput}
+value={usrIn}
+className="form-control"
+style={{ padding: "5px" }}
+/>
+</Col>
+<Col sm={3}>
+<Button
+              className="btn btn-info d-none d-sm-block form-control"
+              onClick={addItem}
+            >
+Add Item
+</Button>
+<Button
+              className="btn btn-info d-block d-sm-none mt-4 form-control"
+              onClick={addItem}
+            >
+Add Item
+</Button>
+</Col>
+</Row>
+
+        <List items={list} />
+      </Container>
+    </div>
+
+);
+}
+
+export default App;
+
+## Your List.js file should look like this
+
+import React, { useContext } from "react";
+import { Row, Col, ListGroup, Card, Button } from "react-bootstrap";
+import { TodoListContext } from "./Context";
+
+export default function List({ items }) {
+const { list, setList } = useContext(TodoListContext);
+
+function removeItem(key) {
+const currentList = [...list];
+const updatedList = currentList.filter((item) => item.id !== key);
+
+    setList(updatedList);
+
+}
+
+return (
+<Row className="mt-4 mb-auto">
+<Col sm={12}>
+<Card>
+<Card.Header className="bg-secondary text-white">
+Your To Do List{" "}
+{items.length > 0 ? "- " + items.length + " Items" : null}
+</Card.Header>
+<ListGroup variant="flush">
+{items.length > 0 ? (
+items.map((item) => {
+return (
+<ListGroup.Item
+key={item.id}
+className="d-flex flex-row justify-content-between" >
+{item.value}
+<Button
+className="btn btn-danger"
+onClick={() => removeItem(item.id)} >
+Delete
+</Button>
+</ListGroup.Item>
+);
+})
+) : (
+<ListGroup.Item>Your To Do List is Empty!</ListGroup.Item>
+)}
+</ListGroup>
+</Card>
+</Col>
+</Row>
+);
+}
+
+### That is it for Lesson 5. See you in the next Lesson. 🙂
