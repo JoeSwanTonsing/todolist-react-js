@@ -12,7 +12,7 @@ In this lesson we will continue with our **To Do List** app. We will now learn a
 
 ### Step 1:
 
-In your **`components`** directory, create a new javascript file and we will call it `Context.js`.
+In your **`components`** directory, create a new javascript file we will call it `Context.js`.
 
 ### Step 2:
 
