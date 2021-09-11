@@ -2,138 +2,238 @@
 
 React JS research & development team's demo and tutorial files.
 
-## Lesson 5 - Managing State Using Context
+## Lesson 6 - Complimenting useContext By Using useReducer Hook
 
 ### Overview
 
-In this lesson we will continue with our **To Do List** app. We will now learn about **_context_** and use it in our app for easier state management.
+In this lesson we will continue with our **To Do List** app. We will now learn about **_useReducer_** and how it compliments _useContext_ in state management.
 
 ## Let's Begin
 
 ### Step 1:
 
-In your **`components`** directory, create a new javascript file we will call it `Context.js`.
+Navigate to `Context.js` inside **`components`** directory.
+
+Our **goal** is to replace `useState` with `useReducer` hook.
+
+For that, we will replace the _useState_ hook with _useReducer_ at the import section of the `Context.js` file.
+
+`import React, { createContext, useReducer } from "react";`
 
 ### Step 2:
 
-Inside the `Context.js` file,we are going to import React, like how we did in all react components.
-We are also going to import `createContext` and `useState` which are the main hooks for building our context(which is similar to a store in Redux).
+Now, we will remove the `useState` declaration line :-
 
-Below is the corresponding code :-
+`const [list, setList] = useState([]);`
 
-`import React, { createContext, useState } from "react";`
+And replace it with a `useReducer` declaration as follows :-
+
+`const [list, dispatch] = useReducer(manipulateList, []);`
+
+_Note: In the left side of the above line, we are specifying the required fields (i.e, list and the setter-function, aka 'dispatch'). In the right side, we can see that the useReducer hook takes two arguments (i.e, manipulateList and a pair of square brackets. These square brackets ([]) signify the initial state of our list and the 'manipulateList' will act as a function which will be called everytime we want to add/delete a todo to/from our state._
 
 ### Step 3:
 
-Our next step is to make use of our `createContext`. To do so, we will create a context which will be exported and used throughout our Todo application. Let's call this context by the name **TodoListContext**
+Our next step is to define our **manipulateList** function. We will define it outside of the **Context** function as follows :-
 
-`export const TodoListContext = createContext();`
+`function manipulateList(state, action) {}`
 
-Brace yourselves! The code is about to be interesting from the next step onwards. :D
+_Note: The **manipulateList** function will take two parameters, state and action. The `state` refers to the **current state** of the useReducer(i.e, the **list** state) and the `action` will be an **object** that is passed by a `dispatch` function(we will see how it works in the next few steps)._
 
 ### Step 4:
 
-Inside our `Context.js` file, we are now going to create a functional component by the name **Context** and export it as default as follows:-
+We are now going to build our **manipulateList** function. Interestingly, this function will have nothing but a _swith statement_ which performs the add/remove operations. Following will be our code :-
 
-    const Context = () => {
-        return ();
-    };
+    function manipulateList(state, action) {
+        switch (action.type) {
+            case "ADD_TODO": {
+               return;
+            }
+            case "DELETE_TODO": {
+               return;
+            }
+            default:
+               return;
+        }
+    }
 
-    export default Context;
+_Note: The `swith()` statement will make use of a field called **type** which is included in the `action` object(we will see how this works in the next few steps) for comparing with the different test-cases.From the code itself, we can understand that the **type** field is nothing but a string. Also, we are simply putting **return** statements in each test-cases for now. We will come back to this function in the later steps._
 
 ### Step 5:
 
-Now, inside our **Context** functional component, we are going to declare a useState array-state variable called `list` as follows :-
+Now, in our <TodoListContext>'s provider, we will change the setter-function **setList** with **dispatch**.
 
-`const [list,setList] = useState([]);`
+    const Context = ({ children }) => {
+        const [list, dispatch] = useReducer(manipulateList, []);
+            return (
+                <TodoListContext.Provider value={{ list, dispatch }}>
+                    {children}
+                </TodoListContext.Provider>
+            );
+    };
 
-And inside our **return** function, we are going to mount a provider component.
-_Note: A provider component is a component which is part of a context. We need to use this component in order to pass data down into our children (which we will see in a bit)_
-
-Let us mount a provider which belongs to the **TodoListContext** created in _step 3_ as follows :-
-
-    return(
-        <TodoListContext.Provider value={{list,setList}}>
-        </TodoListContext.Provider>
-    )
-
-_Note: What we are doing here is we are passing **list** and **setList** as props to our children(But who are the children,right??? We'll see that in the next step)_
+_Note: the state "**list**" that is passed to the children is a different one(i.e, it belongs to the `useReducer` hook and not the `useState` hook anymore._)
 
 ### Step 6:
 
-Let us leave the `Context.js` file for now, and enter our `index.js` file.
-What we are going to do here is, we are going to wrap our `<App/>` component in side our `<Context/>` component which we have just created. To do that we have to import our `Context` component.
+Now, let the **FUN PART** begin!!!
 
-`import Context from "./components/Context";`
-
-Now, let use go ahead and wrap it:-
-
-ReactDOM.render(
-<Context>
-<App />
-</Context>,document.getElementById("root")
-);
-
-_Quick-Qtn:Con you guess who the **children** are???_
-
-### Step 7:
-
-Let us go back to our `Context.js` file.
-Our goal now is provide the children component to the context's provider. We will do that in two steps. Firstly, we will receive the children as parameter of the `Context` functional component and then we will provide it to the <TodoListContext.Provider> component as children with the keyword **children**. The following is our code :-
-
-    const Context = ({ children }) => {
-        const [list, setList] = useState([]);
-        return (
-            <TodoListContext.Provider value={{ list, setList }}>
-                 {children}
-            </TodoListContext.Provider>
-        );
-    };
-
-_Note: The children here is the `<App/>` component and all its children. This basically means that all the components in our application can access our sweet `TodoListContext`. Let us see how we do that in the next step._
-
-### Step 8:
-
-Let us go to our `App.js` file. Here, we can see that we are still using a local **list** state which is declared using the useState hook as follows :-
-
-`const [list, setList] = useState([])`
-
-We are now going to replace the above line by using context state as follows :-
+Navigate to the `App.js` file. Here we will see that we are still using the **list** and **setList** that belongs to `useState` hook and provided by the context via `useContext` hook.
 
 `const { list, setList } = useContext(TodoListContext);`
 
-But hold on!!! We haven't imported the **useContext** hook and **TodoListContext** just yet. Let us do that right away :-
+We are now going to change this line by identifying(i.e, de-structuring) the new changes(i.e, the **list** and **dispatch** props) that are provided by the TodoListContext's provider.
 
-`import React,{useState,useContext} from "react";`
-`import {TodoListContext} from "./components/Context";`
+`const { dispatch } = useContext(TodoListContext);`
 
-*We have just successfully created our context and everytime we add a new to-do, we are storing it in the context. Go ahead and give it a try*🙂
+_Note: Our goal is to work on todo add-operation. So, we are only going to destructure the **dispatch** function for now._
+
+### Step 7:
+
+Now, we will be making use of the `dispatch()` function for adding a todo. For this, we will refactor the code inside **addItem()** function.
+
+Currently, our addItem() function looks like this:-
+
+    function addItem() {
+        if (usrIn !== "") {
+            const newItem = {
+                id: Math.random(),
+                value: usrIn,
+            };
+            const newlist = [...list];
+            newlist.push(newItem);
+            setList(newlist);
+            setUsrIn("");
+        }
+    }
+
+By using the `dispatch()` function, we are going to replace the push() function. Following is the code :-
+
+    function addItem() {
+        if (usrIn !== "") {
+            const newItem = {
+                id: Math.random(),
+                value: usrIn,
+            };
+            dispatch({ type: "ADD_TODO", payload: newItem });
+            setUsrIn("");
+        }
+    }
+
+*Note: We are passing an object which contains two fields inside the dispatch's argument-list. So maybe now you can guess the what that **action** object inside the **manipulateList** function of the `Context.js` file actually is*🙂. The **type** as said earlier is just a string for conditional operation of the switch() **manipulateList** function while the **payload** means the data that we want to make changes(i.e, it acts as extra piece of information).
+
+### Step 8:
+
+Now, let us open side-by-side the `Context.js` file and the `App.js` file.
+
+Our **manipulateList** function of `Context.js` file currently looks like this:-
+
+    function manipulateList(state, action) {
+        switch (action.type) {
+            case "ADD_TODO": {
+               return;
+            }
+            case "DELETE_TODO": {
+               return;
+            }
+            default:
+               return;
+        }
+    }
+
+Our goal is to add some lines of code to the "ADD_TODO" test-case. We will now add the line as follows:-
+
+    function manipulateList(state, action) {
+        switch (action.type) {
+            case "ADD_TODO": {
+                return [...state, action.payload];
+            }
+            case "DELETE_TODO": {
+               return;
+            }
+            default:
+               return;
+        }
+    }
+
+_Note: What we are doing in the above line is we are basically taking the current state and adding a new todo(i.e, the **action.payload**) to it and then returning it back to the `dispatch()` function and to the `useReducer()` hook which updates the new **list** state._
+
+**\_Note: **action** contains **type** and **payload** as it's fields\_**
+
+We are now done with the todo-add-operation. Let's now work on todo-delete-operation in the next step.
 
 ### Step 9:
 
-We are now going to work on the deletion of todos.
+Let us open the `App.js` and `List.js` files side-by-side.
 
-Let us navigate to `List.js` file. Import a button from `react-bootstrap` into this file.
+In the `List.js` file, we can see that we are de-structuring the **list** and **setList** provided by `useState` hook.
 
-`import { Row, Col, ListGroup, Card, Button } from "react-bootstrap";`
+`const { list, setList } = useContext(TodoListContext);`
 
-Now, inside the `<ListGroup.Item>` component, next to _{item.value}_ , we are going to put the delete button. Following is the code :-
+We will now change this line by de-structuring the the newly **list** and **dispatch()** props as follows:- (ofcourse the **list** remains the same as it has the same name :D)
 
-<ListGroup.Item
-key={item.id}
-className="d-flex flex-row justify-content-between" >
-{item.value}
-<Button
-className="btn btn-danger"
-onClick={() => removeItem(item.id)} >
-Delete
-</Button>
-</ListGroup.Item>
+`const { list, dispatch } = useContext(TodoListContext);`
 
-Now, let us cut the `removeItem()` function that we have inside the `App.js` file and paste it inside the `List` functional component as follows:-
+Also we won't be using the **items** prop anymore, so we will delete it from the parameter-list of the `List` functional component :-
 
-export default function List({ items }) {
-const { list, setList } = useContext(TodoListContext);
+    export default function List() {
+        .
+        .
+        .
+    }
+
+Now, instead of the **items** prop, we will use the **list** that we de-structured earlier. So we will replace all the lines in the `return()` function that contain **items** with **list** as follows :-
+
+    return (
+        <Row className="mt-4 mb-auto">
+            <Col sm={12}>
+                <Card>
+                    <Card.Header className="bg-secondary text-white">
+                        Your To Do List{" "}
+                        {list.length > 0 ? "- " + list.length + " Lists" : null}
+                    </Card.Header>
+                    <ListGroup variant="flush">
+                        {list.length > 0 ? (
+                            list.map((item) => {
+                                return (
+                                    <ListGroup.Item
+                                        key={item.id}
+                                        className="d-flex flex-row justify-content-between"
+                                    >
+                                        {item.value}
+                                        <Button
+                                            className="btn btn-danger"
+                                            onClick={() => removeItem(item.id)}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </ListGroup.Item>
+                                );
+                            })
+                        ) : (
+                        <ListGroup.Item>Your To Do List is Empty!</ListGroup.Item>
+                    )}
+                    </ListGroup>
+                </Card>
+            </Col>
+        </Row>
+    );
+
+Also, since we won't be using the **items** prop anymore, let us go ahead and delete it from the line of code where `List` component is rendered . Since `List` component is rendered by `App` component, then let us go to `App.js` file.
+
+We can see the `List` component being rendered as follows in the `App.js` file :-
+
+`<List items={list} />`
+
+We will remove the **items** props :-
+
+`<List />`
+
+### Step 10:
+
+Now, for the last piece of the puzzle: the **removeItem()** function.
+
+Our `removeItem()` function currently looks like this:-
 
     function removeItem(key) {
         const currentList = [...list];
@@ -142,47 +242,36 @@ const { list, setList } = useContext(TodoListContext);
         setList(updatedList);
     }
 
-    return (
-        .
-        .
-        .
-    )
+Using `dispatch()` function, we now can replace it like this :-
 
-}
+    function removeItem(key) {
+        dispatch({ type: "DELETE_TODO", payload: key });
+    }
 
-## After completion, your index.js should look like this
+_Note: Our **action** object has a **type**:"DELETE_TODO" and a **payload**:"key"_
 
-    import React from "react";
-    import ReactDOM from "react-dom";
-    import App from "./App";
-    import "bootstrap/dist/css/bootstrap.min.css";
-    import Context from "./components/Context";
+Thats it for the `App.js` file.
 
-    ReactDOM.render(
-        <Context>
-            <App />
-        </Context>,
-        document.getElementById("root")
-    );
+We now have refactor our `Context.js` file.
 
-## Your Context.js file should look like this
+In the **DELETE_TODO** test-case of the **manipulateList** in the `Context.js` file, we will now perform the array-filter operation and return the modified state. Following is the code:-
 
-    import React, { createContext, useState } from "react";
+    function manipulateList(state, action) {
+        switch (action.type) {
+            case "ADD_TODO": {
+                return [...state, action.payload];
+            }
+            case "DELETE_TODO": {
+                return state.filter((todo) => todo.id !== action.payload);
+            }
+            default:
+                return state;
+        }
+    }
 
-    export const TodoListContext = createContext();
+_Note: The **action.payload** in the "DELETE_TODO" test-case is nothing but a todo-id. Whereas in the "ADD_TODO" test-case, it is a todo-object._
 
-    const Context = ({ children }) => {
-    const [list, setList] = useState([]);
-        return (
-            <TodoListContext.Provider value={{ list, setList }}>
-                {children}
-            </TodoListContext.Provider>
-        );
-    };
-
-    export default Context;
-
-## Your App.js file should look like this
+## After completion, your App.js should look like this
 
     import React, { useState, useContext } from "react";
     import { Col, Container, Row, Button, Navbar, Nav } from "react-bootstrap";
@@ -191,7 +280,7 @@ const { list, setList } = useContext(TodoListContext);
 
     function App() {
         const [usrIn, setUsrIn] = useState("");
-        const { list, setList } = useContext(TodoListContext);
+        const { dispatch } = useContext(TodoListContext);
 
         function addItem() {
             if (usrIn !== "") {
@@ -199,9 +288,7 @@ const { list, setList } = useContext(TodoListContext);
                     id: Math.random(),
                     value: usrIn,
                 };
-                const newlist = [...list];
-                newlist.push(newItem);
-                setList(newlist);
+                dispatch({ type: "ADD_TODO", payload: newItem });
                 setUsrIn("");
             }
         }
@@ -211,66 +298,97 @@ const { list, setList } = useContext(TodoListContext);
         }
 
         return (
-            <div style={{ height: "100vh", overflow: "hidden" }}>
-            <Navbar bg="dark" expand="lg" className="navbar-dark fixed-top">
-            <Container>
-                <Navbar.Brand href="" className="text-light">
-                    To Do List
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav" className="ml-auto">
-                    <Nav className="ml-auto">
-                        <Nav.Link
-                            target="\_blank"
-                            href="https://github.com/JoeSwanTonsing/todolist-react-js/tree/Lesson3-WithBootstrap4"
-                            className="text-light" >
-                                Visit The GitHub Repo
-                        </Nav.Link>
-                        <Nav.Link href="" className="text-secondary">
-                            Demo By React JS R&amp;D Team
-                        </Nav.Link>
-                    </Nav>
-                </Navbar.Collapse>
-            </Container>
-            </Navbar>
-            <Container style={{ paddingTop: 50 }}>
-                <Row className="mt-4 text-center">
-                    <Col className="text-center" sm={9}>
-                        <input
-                            type="text"
-                            id="inputTODO"
-                            name="inputTODO"
-                            placeholder="What do you like to do?"
-                            onChange={updateInput}
-                            value={usrIn}
-                            className="form-control"
-                            style={{ padding: "5px" }}
-                        />
-                    </Col>
-                    <Col sm={3}>
-                        <Button
-                            className="btn btn-info d-none d-sm-block form-control"
-                            onClick={addItem}
-                        >
-                            Add Item
-                        </Button>
-                        <Button
-                            className="btn btn-info d-block d-sm-none mt-4 form-control"
-                            onClick={addItem}
-                        >
-                            Add Item
-                        </Button>
-                    </Col>
-                </Row>
 
-                <List items={list} />
-            </Container>
+            <div style={{ height: "100vh", overflow: "hidden" }}>
+                <Navbar bg="dark" expand="lg" className="navbar-dark fixed-top">
+                    <Container>
+                        <Navbar.Brand href="" className="text-light">
+                            To Do List
+                        </Navbar.Brand>
+                        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                        <Navbar.Collapse id="basic-navbar-nav" className="ml-auto">
+                        <Nav className="ml-auto">
+                            <Nav.Link
+                                target="\_blank"
+                                href="https://github.com/JoeSwanTonsing/todolist-react-js/tree/Lesson3-WithBootstrap4"
+                                className="text-light" >
+                                    Visit The GitHub Repo
+                            </Nav.Link>
+                            <Nav.Link href="" className="text-secondary">
+                                Demo By React JS R&amp;D Team
+                            </Nav.Link>
+                        </Nav>
+                        </Navbar.Collapse>
+                    </Container>
+                </Navbar>
+                <Container style={{ paddingTop: 50 }}>
+                    <Row className="mt-4 text-center">
+                        <Col className="text-center" sm={9}>
+                            <input
+                                type="text"
+                                id="inputTODO"
+                                name="inputTODO"
+                                placeholder="What do you like to do?"
+                                onChange={updateInput}
+                                value={usrIn}
+                                className="form-control"
+                                style={{ padding: "5px" }}
+                            />
+                        </Col>
+                        <Col sm={3}>
+                            <Button
+                                className="btn btn-info d-none d-sm-block form-control"
+                                onClick={addItem}
+                            >
+                                Add Item
+                            </Button>
+                            <Button
+                                className="btn btn-info d-block d-sm-none mt-4 form-control"
+                                onClick={addItem}
+                            >
+                                Add Item
+                            </Button>
+                        </Col>
+                    </Row>
+
+                    <List />
+                </Container>
             </div>
 
-);
-}
+        );
+    }
 
-export default App;
+    export default App;
+
+## Your Context.js file should look like this
+
+    import React, { createContext, useReducer } from "react";
+
+    export const TodoListContext = createContext();
+
+    function manipulateList(state, action) {
+        switch (action.type) {
+            case "ADD_TODO": {
+                return [...state, action.payload];
+            }
+            case "DELETE_TODO": {
+                return state.filter((todo) => todo.id !== action.payload);
+            }
+            default:
+                return state;
+        }
+    }
+
+    const Context = ({ children }) => {
+        const [list, dispatch] = useReducer(manipulateList, []);
+        return (
+            <TodoListContext.Provider value={{ list, dispatch }}>
+                {children}
+            </TodoListContext.Provider>
+        );
+    };
+
+    export default Context;
 
 ## Your List.js file should look like this
 
@@ -278,15 +396,11 @@ export default App;
     import { Row, Col, ListGroup, Card, Button } from "react-bootstrap";
     import { TodoListContext } from "./Context";
 
-    export default function List({ items }) {
-        const { list, setList } = useContext(TodoListContext);
+    export default function List() {
+        const { list, dispatch } = useContext(TodoListContext);
 
         function removeItem(key) {
-            const currentList = [...list];
-            const updatedList = currentList.filter((item) => item.id !== key);
-
-            setList(updatedList);
-
+           dispatch({ type: "DELETE_TODO", payload: key });
         }
 
         return (
@@ -296,11 +410,11 @@ export default App;
                     <Card>
                         <Card.Header className="bg-secondary text-white">
                             Your To Do List{" "}
-                            {items.length > 0 ? "- " + items.length + " Items" : null}
+                            {list.length > 0 ? "- " + list.length + " Items" : null}
                         </Card.Header>
                         <ListGroup variant="flush">
-                            {items.length > 0 ? (
-                                items.map((item) => {
+                            {list.length > 0 ? (
+                                list.map((item) => {
                                     return (
                                         <ListGroup.Item
                                             key={item.id}
@@ -324,4 +438,4 @@ export default App;
         );
     }
 
-### That is it for Lesson 5. See you in the next Lesson. 🙂
+### That is it for Lesson 6. See you in the next Lesson. 🙂

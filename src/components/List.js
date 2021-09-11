@@ -2,14 +2,11 @@ import React, { useContext } from "react";
 import { Row, Col, ListGroup, Card, Button } from "react-bootstrap";
 import { TodoListContext } from "./Context";
 
-export default function List({ items }) {
-  const { list, setList } = useContext(TodoListContext);
+export default function List() {
+  const { list, dispatch } = useContext(TodoListContext);
 
   function removeItem(key) {
-    const currentList = [...list];
-    const updatedList = currentList.filter((item) => item.id !== key);
-
-    setList(updatedList);
+    dispatch({ type: "DELETE_TODO", payload: key });
   }
 
   return (
@@ -18,11 +15,11 @@ export default function List({ items }) {
         <Card>
           <Card.Header className="bg-secondary text-white">
             Your To Do List{" "}
-            {items.length > 0 ? "- " + items.length + " Items" : null}
+            {list.length > 0 ? "- " + list.length + " Items" : null}
           </Card.Header>
           <ListGroup variant="flush">
-            {items.length > 0 ? (
-              items.map((item) => {
+            {list.length > 0 ? (
+              list.map((item) => {
                 return (
                   <ListGroup.Item
                     key={item.id}

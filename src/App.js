@@ -5,7 +5,7 @@ import List from "./components/List";
 
 function App() {
   const [usrIn, setUsrIn] = useState("");
-  const { list, setList } = useContext(TodoListContext);
+  const { dispatch } = useContext(TodoListContext);
 
   function addItem() {
     if (usrIn !== "") {
@@ -13,9 +13,7 @@ function App() {
         id: Math.random(),
         value: usrIn,
       };
-      const newlist = [...list];
-      newlist.push(newItem);
-      setList(newlist);
+      dispatch({ type: "ADD_TODO", payload: newItem });
       setUsrIn("");
     }
   }
@@ -78,7 +76,7 @@ function App() {
           </Col>
         </Row>
 
-        <List items={list} />
+        <List />
       </Container>
     </div>
   );
